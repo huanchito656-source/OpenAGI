@@ -34,7 +34,7 @@ That's the loop. Every agent product in existence — Claude Code, Cursor, Devin
 
 ## What Complex Task Performance Requires
 
-For complex, multi-step tasks — the kind agents are asked to do — prediction alone is not enough. Cognitive science (Soar, ACT-R, predictive processing) and mathematical proof (DeepMind, ICML 2025: "General Agents Need World Models") establish that generalizing agents require a loop with five steps:
+For complex, multi-step tasks — the kind agents are asked to do — prediction alone is not enough. Cognitive science ([Soar](https://soar.eecs.umich.edu/), [ACT-R](http://act-r.psy.cmu.edu/), predictive processing) and mathematical proof (DeepMind, ICML 2025: ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)) establish that generalizing agents require a loop with five steps:
 
 1. **Perceive** — take in information about the current situation
 2. **Model** — build a compressed, structured understanding of how the system works (its constraints, its causal structure, its current state)
@@ -111,7 +111,7 @@ Research across every major framework (LangChain, CrewAI, AutoGen, LangGraph), e
 
 The three that DO predict (ForeAgent, WALL-E, WorldLLM) are research prototypes in controlled environments — not production frameworks, not open source for general use, and none include community knowledge or enforce the loop in code.
 
-**Reflexion specifically** is what the industry calls "self-improvement." It helps — improved code generation from 67% to ~88-91%. But it's autopsy-based. Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It reacts to errors one at a time. That's why it plateaus after 2-3 rounds.
+**Reflexion specifically** is what the industry calls "self-improvement." It helps — GPT-4's pass rate on HumanEval went from 80.1% to 91% with Reflexion ([arXiv](https://arxiv.org/abs/2303.11366)). But it's autopsy-based. Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It reacts to errors one at a time. That's why it plateaus after 2-3 iterations in practice ([practitioner analysis](https://github.com/nibzard/awesome-agentic-patterns/blob/main/patterns/reflection.md)).
 
 The difference:
 - **Everything above:** Act → see what happens → maybe reflect → try again
@@ -161,7 +161,15 @@ The problem: production agents lack the cognitive architecture required for comp
 
 The state of the art: research labs (DeepMind, university groups) have built systems that partially implement this in controlled environments. The research is promising (WALL-E achieved 95% success with the full loop). But it's locked inside labs, applied to game worlds, and not available as open production-ready tools.
 
-The evidence: source code analysis, mathematical proof (DeepMind ICML 2025: "General Agents Need World Models"), 40+ years of cognitive science (Soar, ACT-R, predictive processing), empirical data (59-minute agent half-life, 95% project failure rates, flattening benchmark curves despite model scaling).
+The evidence:
+- Mathematical proof: DeepMind ICML 2025 ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)
+- Cognitive science: [Soar](https://soar.eecs.umich.edu/) (1983-present), [ACT-R](http://act-r.psy.cmu.edu/) (1976-present), predictive processing
+- Agent half-life: [59 minutes for Claude 3.7 Sonnet on complex tasks](https://arxiv.org/abs/2505.05115) (Toby Ord, Oxford)
+- Reliability stagnation: [18 months of model releases, only modest reliability improvement](https://arxiv.org/abs/2602.16666) (Princeton CITP)
+- Enterprise failure: [95% of generative AI pilots fall short of measurable impact](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/) (MIT)
+- Cancellation forecast: [40%+ of agentic AI projects predicted canceled by 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) (Gartner)
+- Benchmark saturation: [SWE-bench Verified scores clustering at 80-81%](https://epoch.ai/benchmarks/swe-bench-verified) with top models separated by fractions of a percent
+- Research prototypes: [WALL-E](https://arxiv.org/abs/2410.07484) (95% success with full loop), [ForeAgent](https://arxiv.org/abs/2601.05930) (6x speedup with prediction)
 
 The solution: the cognitive loop (predict-compare-revise, enforced by code) + seed knowledge (community-contributed domain expertise, see `seeds/` directory) + community refinement (failures become new seeds, ecosystem compounds).
 

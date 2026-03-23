@@ -8,7 +8,7 @@ The world's first decentralized agentic intelligence platform.
 
 Every AI agent runs the same loop: predict what to do, do it, repeat. They never predict what will HAPPEN, never check if they were right, and never revise their understanding when wrong.
 
-This is why agents fail on complex tasks. 59-minute half-life on multi-step work. 95% of enterprise agent projects fail. 18 months of model improvements produced only modest reliability gains.
+This is why agents fail on complex tasks. [59-minute half-life](https://arxiv.org/abs/2505.05115) on multi-step work. [95% of generative AI pilots fall short](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/) of delivering measurable impact. [18 months of model improvements produced only modest reliability gains](https://arxiv.org/abs/2602.16666). [Gartner predicts 40%+ of agentic AI projects will be canceled by 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027).
 
 The problem isn't the LLM. It's the loop around it.
 
@@ -20,7 +20,7 @@ The best current approach is the Reflexion pattern — what the industry calls "
 Act → fail → reflect on why you failed → remember the lesson → try again
 ```
 
-This helps. Reflexion improved code generation from 67% to ~88-91%. But it has a fundamental limitation:
+This helps. Reflexion improved GPT-4's HumanEval pass rate from 80.1% to 91% ([paper](https://arxiv.org/abs/2303.11366)). But it has a fundamental limitation:
 
 **Reflexion is autopsy-based.** Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It doesn't question its own model of the system. It reacts to errors one at a time.
 
@@ -98,7 +98,7 @@ This project is backed by first-principles research documented in the `research/
 - **[Intelligence First Principles](research/intelligence_first_principles.md)** — What complex task performance requires
 - **[Market Gap Validation](research/market_gap_validation.md)** — Proof that nobody has built the full cognitive loop
 
-The cognitive loop is supported by 40+ years of cognitive science (Soar, ACT-R), mathematical proof (DeepMind ICML 2025: "General Agents Need World Models"), and research prototypes showing massive gains (WALL-E achieved 95% success with the full loop in simulated environments).
+The cognitive loop is supported by 40+ years of cognitive science ([Soar](https://soar.eecs.umich.edu/), [ACT-R](http://act-r.psy.cmu.edu/)), mathematical proof (DeepMind ICML 2025: ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)), and research prototypes showing massive gains ([WALL-E](https://arxiv.org/abs/2410.07484) achieved 95% success with the full loop in simulated environments).
 
 ## Why Open Source
 

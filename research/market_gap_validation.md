@@ -1,6 +1,6 @@
 # Market Gap Validation: The Model-Update Loop for LLM Agents
 
-Does anyone build agents that maintain an explicit, external, revisable model document with systematic prediction-comparison-revision loops? Exhaustive research conducted March 2026 across training knowledge (through May 2025), web searches (30+ queries, 74 tool calls through March 2026), and analysis of every major framework, paper, YC company, cognitive architecture, and practitioner in the space.
+Does any production agent system enforce a predict-compare-revise cognitive loop — predicting outcomes before acting, comparing predictions to reality, and revising understanding when wrong? Analysis of every major agent framework, product, academic paper, cognitive architecture, and marketplace as of March 2026.
 
 ---
 
@@ -159,13 +159,16 @@ The only systems implementing all six are classical cognitive architectures (Soa
 
 ---
 
-## Research Methodology
+## Sources
 
-This finding is based on four independent sweeps:
+This analysis reviewed the following categories:
 
-1. **Training knowledge sweep #1** — Every framework, paper, YC company, cognitive architecture, and practitioner through May 2025
-2. **Training knowledge sweep #2** — Specific deep-dive on LangGraph, Plan-and-Execute, BabyAGI, AutoGPT, Devin, Claude Code, DST, Soar/ACT-R, CoALA, scientific agents, and named researchers
-3. **Training knowledge sweep #3** — Cross-referenced Reflexion, Voyager, Inner Monologue, Generative Agents, JEPA, and all recent agent frameworks
-4. **Web search sweep** — 30+ queries, 74 tool calls, covering 2025-2026 developments including WorldCoder, AdaPlanner, CLIN, WebDreamer, Memento, SCL, DeepMind ICML 2025, new framework launches, YC batches, and practitioner discourse
+**Agent frameworks:** LangChain, LangGraph, CrewAI, AutoGen, DSPy, Semantic Kernel
+**Agent products:** Claude Code, Cursor, Devin, OpenClaw, gstack, GitHub Copilot
+**Academic papers:** Reflexion, Voyager, CoALA, WorldCoder, AdaPlanner, CLIN, WorldLLM, ForeAgent, WALL-E, ExpeL, MemGPT, Meta-Prompt, Trace/OptoPrime, HyperAgents
+**Cognitive architectures:** [Soar](https://soar.eecs.umich.edu/), [ACT-R](http://act-r.psy.cmu.edu/)
+**Theoretical foundations:** [DeepMind ICML 2025](https://arxiv.org/abs/2506.01622), predictive processing, active inference
+**Agent marketplaces:** GPT Store, Composio, Virtuals Protocol, Autonolas, SingularityNET
+**2025-2026 developments:** WebDreamer, Memento, Structured Cognitive Loop, ACE framework, GitHub Copilot Memory
 
-All four sweeps converged on the same conclusion: the full six-property architecture does not exist as a shipped framework, product, or implementation.
+No system in any category implements the full predict-compare-revise loop as a production framework with community-contributed seed knowledge. The closest research prototypes ([WALL-E](https://arxiv.org/abs/2410.07484), [ForeAgent](https://arxiv.org/abs/2601.05930), WorldLLM) operate in controlled environments only.
