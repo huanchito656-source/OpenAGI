@@ -6,13 +6,15 @@ Does any production agent system enforce a predict-compare-revise cognitive loop
 
 ## The Specific Architecture Being Searched For
 
-An agent where:
-1. An external, human-readable document (markdown/JSON) represents the agent's current model/understanding of the system
-2. The agent reads this document at the start of each action cycle
-3. The agent writes explicit predictions before acting
-4. The agent compares actual outcomes to predictions after acting
-5. The agent revises the model document based on discrepancies
-6. This loops continuously as a first-class architectural primitive
+An agent that:
+1. Builds a sparse, explicit world model of the system it's operating on (persistent across sessions)
+2. Starts with mandatory priors (community-contributed domain knowledge)
+3. At choice points — moments of uncertainty, high stakes, or novelty — predicts outcomes before acting
+4. Compares predictions to ground truth (actual tool outputs, not self-assessment)
+5. Revises the model when predictions fail
+6. Accumulates metacognitive lessons about its own reasoning over time
+
+The refined architecture (March 2026) differs from the original search in key ways: predictions happen at choice points rather than on every action (bounded rationality), models are sparse rather than comprehensive (neuroscience), and the framework is thinking-first rather than protocol-based.
 
 ---
 
