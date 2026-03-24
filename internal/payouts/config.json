@@ -1,0 +1,13 @@
+{
+  "token_contract": "",
+  "treasury_wallet": "",
+  "treasury_private_key_env": "TREASURY_PRIVATE_KEY",
+  "rpc_url": "",
+  "token_decimals": 9,
+  "payouts": {
+    "seed": 100,
+    "research": 500,
+    "code": 500,
+    "review": 250
+  }
+}
