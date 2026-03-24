@@ -2,157 +2,250 @@
 
 ---
 
-## What Intelligence Is (For Complex Tasks)
+## Scope
 
-Intelligence is not IQ. IQ is one component.
-
-For complex, multi-step tasks — debugging systems, conducting research, analyzing markets, planning projects — intelligence operates as a system, not a single capability.
-
-**Operational intelligence = the ability to infer the structure of a system, build a model of how it works, act within it, and revise the model when reality disagrees with predictions.**
-
-This framework comes from established cognitive science (Soar, ACT-R, predictive processing — 40+ years of research) and is mathematically supported: DeepMind proved (ICML 2025) that any agent generalizing to multi-step tasks must have a predictive model.
-
-**Caveat:** This is not the only theory of intelligence. Some cognitive scientists (Brooks, enactivists) argue simpler forms of intelligence can emerge without internal models — direct reactive coupling between perception and action. This works for simple behaviors (insect navigation, Roomba-style robotics). For complex reasoning tasks — the kind LLM agents are asked to do — the evidence strongly supports that internal models are required. That is the domain this framework applies to.
+This document defines intelligence for **complex, multi-step tasks** — debugging systems, conducting research, analyzing markets, planning projects. This is the domain LLM agents operate in. Simpler forms of intelligence (reactive behavior, insect navigation) may operate differently and are out of scope.
 
 ---
 
-## The Components
+## The Definition
 
-### IQ — Processing Capacity
+**Operational intelligence = building sparse, task-relevant models of systems, using those models to predict outcomes before acting, comparing predictions to reality, and revising the models when wrong — under bounded rationality.**
 
-How fast and how well your brain computes. Specifically:
-
-- **Compression:** Turning messy, complex information into simple models
-- **Pattern recognition:** Seeing structure others miss
-- **Working memory:** Holding and manipulating multiple pieces of information simultaneously
-- **Processing speed:** How quickly you can reason through a problem
-
-IQ is hardware. A faster processor doesn't guarantee good software. High IQ makes it *easier* to build good models — it doesn't guarantee you will.
-
-### First Principles — The Constraints of Reality
-
-First principles are the actual, irreducible facts about a system. They exist independent of the observer. They don't change based on who's looking at them.
-
-- Physics has first principles (conservation of energy, thermodynamics)
-- Economics has first principles (scarcity, incentives, supply/demand)
-- Crypto has first principles (immutability, permissionless, finite block space)
-- AI has first principles (stateless LLM, probabilistic outputs, finite context)
-
-First principles are not opinions, frameworks, or models. They are the constraints that any framework must respect to be correct. Getting them wrong means everything built on top is wrong.
-
-**First principles thinking** = breaking a system down to these irreducible constraints and rebuilding understanding from there, rather than reasoning by analogy or accepting conventional explanations.
-
-This is hard because:
-- It requires ignoring what "everyone knows" and asking "what must be true?"
-- It's slow (you're rebuilding from scratch instead of borrowing)
-- Most education teaches you to reason from existing frameworks, not to derive your own
-
-But it's the only way to understand something you've never seen before, or to see what everyone else is missing.
-
-### Frameworks — Operating Strategies
-
-Frameworks are reusable strategies for acting within the constraints that first principles define. They are derived from understanding, not given by authority.
-
-Examples:
-- Game theory (model how others will act given their incentives)
-- Incentive analysis (follow the money, follow the motivation)
-- Asymmetric risk (seek situations where downside is capped but upside is large)
-- Opportunity cost (every choice excludes other choices)
-
-Frameworks are not truth — they are tools. A framework works until it doesn't. The map is not the territory. Using a framework without understanding the first principles it's built on is dangerous — you won't know when it breaks.
-
-**The relationship:** First principles tell you what's true about a system. Frameworks tell you how to operate within it. Intelligence is knowing which framework to apply, when to abandon one, and when to build a new one.
-
-### The Loop — What Makes It Operational
-
-For complex tasks, intelligence is not any single component. It's the loop:
-
-1. **Perceive** — What's actually happening? (Not what you expected or wanted)
-2. **Model** — What are the constraints? What causes what? (First principles)
-3. **Decide** — Given this model, what's the best action? (Framework selection)
-4. **Act** — Execute under uncertainty (you never have complete information)
-5. **Update** — Did reality match your model? If not, fix the model. (This is where most people fail)
-
-The speed and quality of this loop is what separates people operationally. IQ affects how fast you can run it. Discipline affects whether you actually run it. Ego affects whether you update when you're wrong.
+This definition is this project's synthesis. It is not attributed to any single source. It is derived from and consistent with the mathematical proofs, neuroscience, and first principles constraints documented below.
 
 ---
 
-## Common Failures
+## Mathematical Foundations
 
-**High IQ, low intelligence:**
-- Overthinks, overanalyzes, never acts
-- Builds beautiful models but doesn't test them against reality
-- Can't update because ego is attached to being right
+Five independent lines of mathematical proof establish that agents operating on complex multi-step tasks MUST have world models. These are proven theorems, not opinions.
 
-**Low IQ, high operational intelligence:**
-- Uses simple but correct frameworks
-- Acts fast, observes results, adjusts
-- Doesn't need to understand everything — just enough to operate
+### 1. Good Regulator Theorem (Conant & Ashby, 1970)
 
-**Framework without first principles:**
-- Applies rules without understanding why they work
-- Can't adapt when conditions change
-- Gets blindsided by situations the framework wasn't designed for
+"Every good regulator of a system must be a model of that system."
 
-**First principles without frameworks:**
-- Understands everything but can't decide or act
-- Re-derives from scratch every time instead of building reusable tools
-- Slow, never ships
+Any system that optimally controls another system must contain a mathematical homomorphism (structure-preserving mapping) of the system it controls. Proven for deterministic systems. Extended (less cleanly) to stochastic systems.
+
+**Source:** Conant, R.C. & Ashby, W.R. "Every Good Regulator of a System Must Be a Model of That System." International Journal of Systems Science, 1(2), 1970.
+
+**Assumptions:** Deterministic system, optimal regulation. Real agents don't achieve optimal regulation, so this proves what's required for optimality, not for "good enough."
+
+### 2. Solomonoff Induction (Solomonoff, 1964)
+
+The uniquely optimal method for prediction is Bayesian inference with a universal prior (weighting hypotheses by simplicity via Kolmogorov complexity). This provably converges to the true environment.
+
+**What it proves:** Optimal learning requires maintaining a distribution over world models and updating via Bayes' rule. Simpler models should be weighted higher (Occam's razor is mathematically justified).
+
+**Source:** Solomonoff, R. "A Formal Theory of Inductive Inference." Information and Control, 7(1-2), 1964.
+
+**Critical limitation:** Incomputable. Computing Kolmogorov complexity requires solving the halting problem. This means the theoretically optimal learning method cannot be implemented. All real intelligence must approximate.
+
+### 3. AIXI (Hutter, 2000/2005)
+
+The provably optimal general agent. Selects actions that maximize expected reward over all computable environments, weighted by Solomonoff prior.
+
+**What it proves:**
+- Optimal general intelligence MUST maintain world models
+- MUST update them via Bayes' rule
+- MUST plan by maximizing expected reward over the model distribution
+- MUST weight simpler explanations higher
+
+**Source:** Hutter, M. "Universal Artificial Intelligence: Sequential Decisions Based on Algorithmic Probability." Springer, 2005. Also arXiv:cs/0004001.
+
+**Critical limitations:**
+- Incomputable (same as Solomonoff)
+- Doesn't model itself as part of the environment (embedded agency problem)
+- Horizon-dependent
+- Chollet (2019, arXiv:1911.01547) argues AIXI conflates skill with intelligence — an agent that memorizes solutions scores high without being "intelligent"
+
+### 4. RL Sample Complexity Bounds (Strehl, Li, Littman, 2006+)
+
+Model-based reinforcement learning is provably more sample-efficient than model-free RL. Model-free approaches can require exponentially more samples to achieve the same performance.
+
+**What it proves:** Agents with explicit models learn faster than agents without them. This is a provable efficiency advantage, not just an empirical observation.
+
+**Source:** Strehl, A., Li, L., & Littman, M. "PAC Model-Free Reinforcement Learning." ICML 2006.
+
+### 5. DeepMind Proof (Richens, Abel, Bellot, Everitt, 2025)
+
+Any agent that generalizes across multi-step goals must contain a world model. Constructive proof with error bounds — they provide an algorithm that extracts the world model from the agent's policy.
+
+**What it proves:** There is no "model-free shortcut" for multi-step generalization. The model is mathematically necessary. Better performance requires better models (error scales as O(δ/√n)).
+
+**Does NOT apply to:** Myopic (depth-1) agents. The necessity kicks in only for multi-step planning.
+
+**Source:** Richens, J., Abel, D., Bellot, A., & Everitt, T. "General Agents Need World Models." ICML 2025. arXiv:2506.01622.
+
+### No Free Lunch (Wolpert & Macready, 1997)
+
+When averaged over ALL possible problems, no algorithm outperforms any other — including random search. This proves that inductive biases (assumptions about which environments are more likely) are NECESSARY, not optional. An agent with no assumptions performs no better than random.
+
+**What this means for intelligence:** World models encode assumptions about environment structure. NFL proves these assumptions are mandatory. You MUST have a model. There is no alternative.
+
+**Source:** Wolpert, D. & Macready, W. "No Free Lunch Theorems for Optimization." IEEE Transactions on Evolutionary Computation, 1(1), 1997.
+
+**Critical nuance:** NFL does NOT prove general intelligence is impossible. It proves it's impossible WITHOUT inductive biases. With the right biases (like Solomonoff's simplicity prior), general intelligence IS possible — just not over the space of ALL possible problems.
 
 ---
 
-## The AI Mapping
+## Irreducible First Principles Constraints
 
-This framework maps cleanly onto AI systems because AI systems are built from the same components — just implemented differently.
+Six constraints that ANY intelligent system must respect, proven by mathematics and physics.
 
-| Human | AI Equivalent |
-|-------|--------------|
-| IQ (processing capacity) | Model capability — inference strength, compression, generalization |
-| First principles (reality constraints) | Environment/task structure — external to the model, the model approximates them |
-| Frameworks (operating strategies) | Learned policies/heuristics — encoded implicitly in model weights, activated by prompts |
-| The loop (perceive → model → decide → act → update) | The agent harness — while loop with tools, memory, and feedback |
-| Intelligence (the full system) | Does not exist in a raw LLM — requires the agent architecture |
+### 1. Information is finite and bounded (Shannon, 1948)
 
-### What a raw LLM is
+No system can process or transmit more information than its channel capacity allows. Data cannot be compressed below its entropy. These are proven theorems about information itself, substrate-independent.
 
-A stateless function. Text in, probability distribution over next tokens out. It has no memory, no goals, no persistence. It contains compressed approximations of many frameworks (from training data), but it cannot:
-- Maintain intentions across time
-- Act in the world
-- Update from consequences
-- Choose its own objectives
+### 2. Computation costs energy (Landauer, 1961)
 
-A raw LLM is a **reasoning primitive** — a cognitive engine without an operator.
+Erasing one bit requires at minimum kT·ln(2) joules. Intelligence involves irreversible computation. Therefore intelligence requires energy with a hard lower bound. Experimentally confirmed (Bérut et al., 2012).
 
-### What an agent is
+### 3. Some problems are provably unsolvable (Turing, 1936; Gödel, 1931)
 
-An LLM embedded in a control loop. The harness adds:
-- State (conversation history, memory)
-- Goals (the user's prompt, system instructions)
-- Action (tool calls — code execution, API calls, file operations)
-- Feedback (tool results fed back into context)
+No computable system can solve the halting problem. No consistent formal system can prove its own consistency. A computable intelligent system cannot fully predict its own behavior. These are absolute mathematical barriers.
 
-This is what closes the perceive → model → decide → act → update loop. An agent approximates operation. A raw LLM only approximates cognition.
+### 4. Perfect learning is impossible (Kolmogorov, 1965; Solomonoff, 1964)
 
-### What "better models" means
+Kolmogorov complexity is uncomputable. The theoretically optimal learning method (Solomonoff induction) cannot be implemented. All real intelligence must use approximations to an ideal that is provably unreachable.
 
-As models improve (more parameters, better training, better architecture), they get better at:
-- Compressing complex information into useful representations
-- Maintaining coherence over longer reasoning chains
-- Generalizing to new problems
-- Selecting better strategies from their implicit framework library
+### 5. Consistent uncertain reasoning must be Bayesian (Cox, 1946)
 
-This feels like "higher IQ" because it is — the processing capacity of the cognitive engine is increasing. But it doesn't automatically produce better operation. That still requires the agent loop.
+Any system of plausible reasoning satisfying basic consistency requirements must be isomorphic to probability theory (Cox's Theorem, proven). Bayes' theorem is the uniquely correct framework for updating beliefs under uncertainty. But exact Bayesian inference is intractable (#P-hard in general). So the correct method exists but cannot be exactly implemented.
+
+### 6. All physical intelligence is bounded rational (Simon, 1955 + complexity theory)
+
+General planning is PSPACE-complete (Bylander, 1994). Exact Bayesian inference is #P-hard (Roth, 1996). Combined with finite physical resources, this means every real intelligent system MUST use heuristics and approximations. Bounded rationality is not a design choice — it is a mathematical consequence of hard problems + finite resources.
+
+**Key insight from Gigerenzer (1999):** Bounded rationality isn't just "doing worse with less." The right simplification can OUTPERFORM optimal procedures in uncertain environments because simpler models are less prone to overfitting.
 
 ---
 
-## The Bottom Line
+## Neuroscience: What's Empirically Proven
 
-For complex, multi-step tasks, intelligence is not a single number or capability. It is a system:
+What has actually been measured in biological intelligence, distinguishing proven findings from theoretical interpretations.
 
-- **First principles** give you accurate models of reality
-- **Frameworks** give you strategies for acting within those models
-- **IQ/processing** determines how fast you can build and apply them
-- **The loop** (act → observe → update) is what makes it operational
-- **Discipline** determines whether you actually run the loop or just think about it
+### Proven
 
-For AI: LLMs provide the processing and the implicit frameworks. Agents provide the loop. Neither alone is intelligent. Combined, they approximate operational intelligence — with the structural limitations documented in `unsolved_problems.md`.
+**The brain generates predictions.**
+Omission responses: neurons fire at the expected time of a stimulus that doesn't occur — genuine prediction, not just adaptation (Keller & Mrsic-Flogel, 2018). Mismatch negativity: distinct neural response to pattern violations, replicated thousands of times across labs, modalities, and species (Näätänen et al., 1978+).
+
+**Dopamine encodes prediction errors.**
+Dopamine neurons fire for unexpected rewards, pause for unexpected omissions, and shift from reward to predictive cue — quantitatively matching temporal-difference learning (Schultz, Dayan, & Montague, 1997). One of the most replicated findings in systems neuroscience. The quantitative match is tight, not metaphorical.
+
+**The hippocampus builds spatial models and simulates future trajectories.**
+Place cells map locations (O'Keefe & Dostrovsky, 1971). Grid cells provide metric coordinates (Hafting et al., 2005). Before a rat moves, hippocampal replay sweeps forward through the upcoming trajectory (Pfeiffer & Foster, 2013). At choice points, hippocampal activity alternates between possible paths — mental simulation of options (Johnson & Redish, 2007). This is direct neural evidence of model-based planning.
+
+**PFC encodes abstract task structure.**
+Population-level analysis shows PFC simultaneously encodes multiple task-relevant variables in a compositional way — effectively a low-dimensional model of task structure (Mante et al., 2013). Neurons encode abstract rules independent of specific stimuli (Wallis et al., 2001). PFC is necessary for flexible, goal-directed behavior (lesion studies, extensively replicated).
+
+**Internal models are sparse, not comprehensive.**
+Change blindness: people fail to detect large visual changes, proving the brain does NOT maintain a detailed internal model of the visual scene (Simons & Chabris, 1999). Whatever models exist are sparse and task-relevant.
+
+**Model-based and model-free processing coexist.**
+Two-step decision tasks show humans use both model-based (hippocampus, PFC) and model-free (ventral striatum) strategies simultaneously (Daw et al., 2011). Motor cortex operates as a dynamical system without explicit models (Churchland et al., 2012). The dorsal visual stream operates through direct sensorimotor coupling (Goodale & Milner, 1992).
+
+**The same neural network handles memory and future simulation.**
+The default mode network activates during both remembering past events and imagining future ones — the brain reuses memory components to construct models of future scenarios (Buckner & Carroll, 2007; Addis et al., 2007).
+
+### Not Proven
+
+- Full hierarchical predictive coding architecture — consistent with data but not uniquely so
+- Free Energy Principle as unified theory — may be unfalsifiable at the principle level (Colombo & Wright, 2017)
+- Brain implements Bayesian inference — behavior is often Bayesian-like but neural implementation unclear
+- Mirror neurons underlie social understanding — mirror neurons exist but functional role contested
+
+---
+
+## Cognitive Science: The State of the Field
+
+There is no unified theory of intelligence. The field is genuinely fragmented. This fragmentation reflects deep, unresolved disagreements about what intelligence IS.
+
+### What ALL major theories agree on
+
+1. **Intelligence is not monolithic.** Every theory distinguishes multiple components or modes.
+2. **Flexible/novel processing differs from routine/automatic processing.** Whether called System 1/System 2 (Kahneman), compiled/deliberate (Soar), or procedural/declarative (ACT-R) — everyone agrees there are at least two modes.
+3. **Perception and action are tightly coupled.** Even representationalist theories now accept this.
+4. **Learning requires experience-dependent change in processing.**
+5. **Integration of information from multiple sources matters.**
+
+### What they irreconcilably disagree on
+
+1. **Are internal representations necessary for intelligence?** Yes: Computational Theory of Mind, Soar, ACT-R, Predictive Processing. No: Enactivism (Varela, Thompson, Rosch, 1991), Brooks (1991). This is the deepest fault line.
+2. **Is computation the right framework?** Yes: CTM, Soar, ACT-R. Partially: Predictive Processing. No: Enactivism (favors dynamical systems).
+3. **Does intelligence require consciousness?** Unresolved. GWT says flexible intelligence needs it. Most architectures don't address it.
+
+### Key architectures and their status
+
+**Soar (Newell/Laird, 1982+):** Implemented cognitive architecture with Input-Propose-Decide-Apply-Output cycle. Learns through chunking (compiling deliberation into automatic rules). Has modeled ~600+ psychological phenomena. Weakness: no native probabilistic reasoning, relies on hand-engineered knowledge.
+
+**ACT-R (Anderson, 1993+):** Implemented architecture with modular structure mapped to brain regions. Makes quantitative predictions of reaction times, error rates, and fMRI patterns that have been confirmed. Weakness: each task requires a new model built within the architecture.
+
+**Predictive Processing (Friston, 2006; Clark, 2016):** The brain as prediction machine — generates top-down predictions, processes bottom-up prediction errors. Mathematically ambitious. Strong evidence at the sensory level (MMN, suppression). May be unfalsifiable at the principle level. Clark's "Surfing Uncertainty" presents the more empirically grounded version.
+
+**Enactivism (Varela, Thompson, Rosch, 1991):** Cognition is embodied action, not computation over representations. Correctly identifies deep problems with representationalism (grounding problem, frame problem). Major weakness: no formal model, no quantitative predictions, no implemented architecture.
+
+**Brooks' Subsumption Architecture (1986-1991):** Proved that reactive, representation-free robots can navigate real environments. Demonstrated that classical AI's dependency on world models was not necessary for insect-level behavior. Never scaled beyond reactive tasks. Brooks co-founded iRobot and directed MIT CSAIL — not a fringe position.
+
+### Counter-arguments to the world model requirement
+
+The mathematical proofs establish that world models are necessary for OPTIMAL multi-step agents. But:
+
+- Brooks proved that reactive behavior doesn't need models
+- Enactivists argue cognition is organism-environment coupling, not internal modeling
+- The embodiment debate is unresolved — whether intelligence REQUIRES a body is a theoretical position with no formal proof
+
+**Why these counter-arguments don't apply to LLM agents:** LLM agents operate on complex, multi-step reasoning tasks — not reactive insect-level behavior. The DeepMind proof specifically covers multi-step goal-generalizing agents. For this domain, the mathematical case for world models is proven. The counter-arguments are strongest for embodied, reactive intelligence, which is out of scope.
+
+---
+
+## The Synthesis
+
+This project's synthesis, derived from the mathematical proofs, neuroscience, and first principles:
+
+**For complex multi-step tasks, intelligence requires:**
+
+1. **World models** — sparse, task-relevant representations of how the system works. Mathematically proven necessary (5 independent proofs). Neuroscience confirms: brains build sparse models, not comprehensive replicas.
+
+2. **Prediction before action** — using the model to anticipate outcomes before acting. Neuroscience confirms: hippocampus simulates future trajectories before the animal moves (Pfeiffer & Foster, 2013).
+
+3. **Comparison to reality** — checking predictions against actual outcomes using ground truth. Neuroscience confirms: dopamine prediction errors are a core neural mechanism, quantitatively matching temporal-difference learning (Schultz et al., 1997).
+
+4. **Model revision** — updating the model when predictions are wrong. Mathematically proven optimal (Solomonoff/Bayesian updating). Neuroscience confirms: prediction errors drive learning.
+
+5. **Bounded rationality** — all of the above must operate under finite time, finite information, and imperfect approximations. Mathematically proven (Kolmogorov uncomputability + complexity theory + finite resources). Not everything needs the full loop — routine/simple tasks can be model-free (neuroscience confirms model-based and model-free coexist).
+
+6. **Inductive biases** — assumptions about which environments are more likely. Mathematically proven necessary (NFL theorems). An agent with no biases performs no better than random. Seeds, prior knowledge, and structural assumptions are not optional — they are mandatory.
+
+**The five-step loop (perceive → model → decide → act → update)** is this project's operational formulation of the above. The components are proven. The specific sequential formulation is our synthesis. The loop applies in full force when tasks are novel, complex, or high-stakes. Routine tasks can operate in a lighter, model-free mode.
+
+---
+
+## What This Means for AI Agents
+
+### The gap
+
+Current production agents (Claude Code, Cursor, Devin, LangChain, CrewAI, AutoGen) implement: **predict action → execute → predict action → execute.**
+
+The mathematical proofs say they should implement: **model → predict outcome → act → compare → revise model.**
+
+The difference: current agents predict WHAT TO DO next. They don't predict WHAT WILL HAPPEN. They don't compare predictions to reality. They don't systematically revise their understanding when wrong.
+
+This is verified as of March 2026 across all major production agent frameworks. No production framework implements predict-compare-revise as a core architectural pattern.
+
+### The evidence it works
+
+- **WALL-E** (UTS/U Maryland/Tencent, 2024; NeurIPS 2025, arXiv:2410.07484): Predicts trajectories, compares to reality, revises rules. 95-98% success on ALFWorld.
+- **ForeAgent** (ZJU, 2026, arXiv:2601.05930): Predicts outcomes before executing ML pipelines. 6x speedup, +6% performance.
+- **WorldLLM** (2025): Bayesian hypothesis testing in text games. Full predict-compare-revise loop.
+
+All are research prototypes in controlled environments. None is a production framework.
+
+### Important nuance
+
+The mathematical proofs say models must EXIST. They do NOT say models must be EXPLICIT (as in a text file). A neural network's weights could satisfy the theorems without having anything human-readable. Making models explicit (inspectable, testable, shareable) is this project's engineering choice, motivated by practical advantages:
+- Explicit models can be inspected and debugged
+- Explicit models survive context compaction and session boundaries (critical for stateless LLMs)
+- Explicit models can be shared across a community (seeds)
+- Explicit models force the agent to articulate what it believes, making beliefs testable
+
+This is a well-motivated engineering decision, not a mathematical requirement.
