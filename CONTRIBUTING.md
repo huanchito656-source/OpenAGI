@@ -1,8 +1,8 @@
 # Contributing to OpenAGI
 
-## Phase 1: Seeds Only
+## Seeds Only (For Now)
 
-Right now we're accepting **seed contributions only**. Research, code, and review contributions will open in future phases as workflows are established.
+Right now we're accepting **seed contributions only**. More contribution types will open as the project matures.
 
 ## What Is a Seed?
 
@@ -27,6 +27,7 @@ Seeds are NOT instructions for how to do a task. They're knowledge about what to
    - The seed (one sentence or short paragraph)
    - Which domain file it belongs in (coding, research, trading, etc. — or propose a new domain)
    - Brief context: what failure taught you this lesson (1-2 sentences)
+   - Your Solana wallet address (in the PR body — this is how you get paid)
 
 ## Seed Format
 
@@ -53,11 +54,10 @@ Seeds are organized by domain:
 - `seeds/research.md` — Research and analysis knowledge
 - More domains added as the community contributes them
 
-If your seed doesn't fit an existing domain, propose a new domain file in your PR.
+If your seed doesn't fit an existing domain, propose a new domain file in your PR. When adding a new domain file, also add an entry to `seeds/manifest.md` so agents can discover it.
 
-## Future Phases
+## Getting Paid
 
-- **Phase 2:** Research contributions (analysis, benchmarks, findings) and code contributions (library improvements, integrations)
-- **Phase 3:** Community reviewers (verified contributors reviewing others' submissions)
+Verified seed contributions earn tokens. When your PR is reviewed and merged, the payout is logged automatically. Include your Solana wallet address in your PR body so we can send payment.
 
-These tiers will open as the project matures and workflows are established.
+All contributions are reviewed before payout. Quality over quantity — generic or duplicate seeds are rejected.

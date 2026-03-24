@@ -1,6 +1,8 @@
 # OpenAGI
 
-The world's first decentralized agentic intelligence platform.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+Make any AI agent intelligent. Drop-in cognitive framework that works with any agent, any LLM. No SDK, no dependency. Just files.
 
 ---
 
@@ -8,101 +10,132 @@ The world's first decentralized agentic intelligence platform.
 
 Every AI agent runs the same loop: predict what to do, do it, repeat. They never predict what will HAPPEN, never check if they were right, and never revise their understanding when wrong.
 
-This is why agents fail on complex tasks. [59-minute half-life](https://arxiv.org/abs/2505.05115) on multi-step work. [95% of generative AI pilots fall short](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/) of delivering measurable impact. [18 months of model improvements produced only modest reliability gains](https://arxiv.org/abs/2602.16666). [Gartner predicts 40%+ of agentic AI projects will be canceled by 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027).
-
-The problem isn't the LLM. It's the loop around it.
-
-## What People Do Right Now (And Why It's Not Enough)
-
-The best current approach is the Reflexion pattern — what the industry calls "self-improvement":
-
-```
-Act → fail → reflect on why you failed → remember the lesson → try again
-```
-
-This helps. Reflexion improved GPT-4's HumanEval pass rate from 80.1% to 91% ([paper](https://arxiv.org/abs/2303.11366)). But it has a fundamental limitation:
-
-**Reflexion is autopsy-based.** Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It doesn't question its own model of the system. It reacts to errors one at a time.
-
-That's why it plateaus after 2-3 rounds. It memorizes specific lessons from specific failures but doesn't develop transferable understanding that prevents failures it hasn't seen yet.
-
-The difference:
-
-```
-Reflexion: Act → fail → "what went wrong?" → remember → try again
-           (learning from crashes)
-
-What's missing: Understand → predict what will happen → act → "was I right?" → revise understanding
-               (learning from testing your understanding against reality)
-```
-
-One learns from failure after the fact. The other builds and tests understanding proactively. One memorizes answers. The other learns the subject.
+Five independent mathematical proofs spanning 55 years establish that agents operating on complex multi-step tasks MUST have world models. No production agent framework has one.
 
 ## The Solution
 
-A library that plugs into any existing agent and adds the missing cognitive loop.
+A cognitive framework that gives any agent three things it doesn't have by default:
 
-**Before every action:** predict the outcome.
-**After every action:** compare prediction to reality.
-**When wrong:** revise understanding.
+1. **A persistent world model** — sparse, explicit beliefs about the system, revised when wrong. Required because LLMs are stateless.
+2. **Starting assumptions (seeds)** — community-contributed blind spot warnings. Mathematically proven necessary (No Free Lunch theorems).
+3. **A thinking pattern** — at choice points, the agent states what it believes, predicts what will happen, compares to reality, and revises when wrong. Between choice points, it acts naturally.
 
-Two levels:
-- **System understanding** — the agent's model of the external thing it's working on
-- **Process understanding** — the agent's model of its own reasoning (are my sources reliable? am I making unfounded assumptions?)
+One person's failure becomes a seed. Every agent benefits forever.
 
-Plus a community-built seed library — domain-specific knowledge that makes agents smarter from startup. Seeds are things agents should know but don't — traps, patterns, blind spots learned from real experience.
-
-## How It Works
-
-```
-1. Agent starts a task
-2. Loads seed knowledge for the relevant domain
-3. Builds understanding through the cognitive loop:
-   - Predict what will happen
-   - Act
-   - Compare prediction to reality
-   - Revise understanding when wrong
-4. Seeds prevent known failures
-5. New failures become new seeds for the community
-```
-
-The library enforces this loop in code. The agent can't skip the steps. Any existing harness (Claude Code, OpenClaw, Cursor, LangChain, custom) can integrate it.
+---
 
 ## Quick Start
 
-```python
-# Coming soon
+Run this in your project directory:
+
+```bash
+curl -sf https://raw.githubusercontent.com/huanchito656-source/OpenAGI/main/setup.sh | bash
 ```
 
-## Project Structure
+This downloads `loop.md` and `seeds/` into `.openagi/`, detects your agent, and injects the framework instructions. That's it.
+
+### Manual setup
+
+**1.** Copy `loop.md` and `seeds/` into a `.openagi/` directory in your project.
+
+**2.** Add the framework instruction to your agent's config:
+
+| Agent | Where to add it |
+|-------|----------------|
+| Claude Code | `CLAUDE.md` |
+| Cursor | `.cursor/rules/openagi.md` |
+| Cline | `.clinerules` |
+| Any other | System prompt |
 
 ```
-core/           — The cognitive loop library
-seeds/          — Community-contributed domain knowledge
-research/       — First-principles research behind the project
-examples/       — Working demos
+Read and follow .openagi/loop.md. Load seeds at task start. Think in falsifiable beliefs.
+At choice points — when uncertain, when stakes are high, when novel — state the belief,
+predict, act, compare to ground truth, revise if wrong. Between choice points, act naturally.
+Persist your model in understanding.md. Accumulate reasoning lessons in process.md.
 ```
 
-## Contributing
+### What happens next
 
-Right now we're accepting **seed contributions only** — domain-specific knowledge from real agent failures. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit seeds.
+The agent will:
+- Load seeds — mandatory starting assumptions for its domain
+- Build a sparse model of the system (`understanding.md`) — updated when beliefs change
+- At choice points: predict outcomes, compare to reality, revise when wrong
+- Accumulate reasoning lessons (`process.md`) that compound across sessions
 
-Research, code, and review contributions will open in future phases.
+---
+
+## What the Agent Creates
+
+| File | What it is |
+|------|-----------|
+| `understanding.md` | Sparse model of the system — falsifiable beliefs, revised when wrong |
+| `process.md` | Lessons about the agent's own reasoning — compounds over time |
+
+These are the agent's persistent memory. The LLM is stateless — without these files, everything learned evaporates between sessions.
+
+---
+
+## How Seeds Work
+
+Seeds are domain-specific blind spot warnings from real agent failures. They tell the agent what to watch out for — not what to do. They're mathematically necessary: No Free Lunch theorems prove an agent with no starting assumptions performs no better than random.
+
+```markdown
+- **Seed:** When fixing one test breaks another, the bug is in shared state
+  you haven't identified yet — stop and map the dependencies before continuing.
+  **Context:** Agents oscillating between fixes that alternately break different
+  tests because they don't understand how the tests are coupled.
+```
+
+Seeds also serve as **choice point detectors** — they flag situations where the agent should engage deeper thinking.
+
+As the community grows, the seed library grows. Every new seed makes every agent smarter from startup.
+
+---
+
+## Repository Structure
+
+```
+├── setup.sh             One-command install script
+├── loop.md              The cognitive framework — copy this into your project
+├── seeds/               Domain knowledge — copy this into your project
+│   ├── manifest.md      Index of available seeds
+│   ├── universal.md     Methodology seeds (always loaded)
+│   ├── coding.md        Coding and debugging seeds
+│   └── research.md      Research and analysis seeds
+│
+├── research/            First-principles research behind the project
+│   ├── the_finding.md
+│   ├── ai_first_principles.md
+│   ├── intelligence_first_principles.md
+│   └── market_gap_validation.md
+│
+├── internal/            Project infrastructure (not part of the framework)
+│   ├── scripts/         Automation (tweet bot, payout processing)
+│   └── payouts/         Contribution payout ledger and config
+│
+├── CONTRIBUTING.md      How to submit seeds and get paid
+└── LICENSE              MIT
+```
+
+**To use OpenAGI**, you only need `loop.md` and `seeds/`. Everything else is project infrastructure or research documentation.
+
+---
 
 ## The Research
 
-This project is backed by first-principles research documented in the `research/` directory:
+This project is backed by verified first-principles research:
 
-- **[The Finding](research/the_finding.md)** — What's wrong with current agents and the evidence behind it
+- **[The Finding](research/the_finding.md)** — What's wrong with current agents and the 55 years of mathematical proof behind it
 - **[AI First Principles](research/ai_first_principles.md)** — What LLMs and agents actually are
-- **[Intelligence First Principles](research/intelligence_first_principles.md)** — What complex task performance requires
-- **[Market Gap Validation](research/market_gap_validation.md)** — Proof that nobody has built the full cognitive loop
+- **[Intelligence First Principles](research/intelligence_first_principles.md)** — What intelligence requires, verified against primary sources
 
-The cognitive loop is supported by 40+ years of cognitive science ([Soar](https://soar.eecs.umich.edu/), [ACT-R](http://act-r.psy.cmu.edu/)), mathematical proof (DeepMind ICML 2025: ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)), and research prototypes showing massive gains ([WALL-E](https://arxiv.org/abs/2410.07484) achieved 95% success with the full loop in simulated environments).
+The cognitive framework is supported by: the Good Regulator Theorem (1970), Solomonoff Induction (1964), AIXI (2000), RL sample complexity bounds (2006+), and DeepMind's constructive proof (ICML 2025: ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)). Empirical validation from [WALL-E](https://arxiv.org/abs/2410.07484) (95-98% success with the full loop) and [ForeAgent](https://arxiv.org/abs/2601.05930) (6x speedup with outcome prediction).
 
-## Why Open Source
+## Contributing
 
-The intelligence compounds faster with more participants. If one company owns this, only their agents get smarter. If it's open, every agent gets smarter. Open source isn't philosophy here — it's an architectural requirement.
+We're accepting **seed contributions** — domain-specific knowledge from real agent failures. Verified seeds earn tokens. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit and get paid.
+
+If you've used an AI agent and it failed in a way that taught you something, that lesson is a seed. Submit it. Every agent using that domain benefits.
 
 ## License
 
