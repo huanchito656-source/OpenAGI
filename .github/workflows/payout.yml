@@ -1,0 +1,102 @@
+name: Log Contribution Payout
+
+on:
+  pull_request:
+    types: [closed]
+
+concurrency:
+  group: payout-ledger
+  cancel-in-progress: false
+
+jobs:
+  log-payout:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Extract and log payout
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # Determine contribution tier from labels
+          TIER=""
+          for label in seed research code review; do
+            if echo "$PR_LABELS" | jq -e "index(\"$label\")" > /dev/null 2>&1; then
+              TIER="$label"
+              break
+            fi
+          done
+
+          if [ -z "$TIER" ]; then
+            echo "::warning::No tier label (seed/research/code/review) found on PR #$PR_NUMBER. Skipping payout."
+            exit 0
+          fi
+
+          # Extract Solana wallet address from PR body
+          # Looks for base58 string (32-44 chars, Solana address format)
+          WALLET=$(echo "$PR_BODY" | grep -oE '[1-9A-HJ-NP-Za-km-z]{32,44}' | head -1)
+
+          if [ -z "$WALLET" ]; then
+            echo "::warning::No Solana wallet address found in PR #$PR_NUMBER. Logging without wallet — contributor can provide later."
+          fi
+
+          # Read payout amount from config
+          AMOUNT=$(jq -r ".payouts.$TIER" internal/payouts/config.json)
+
+          # Create ledger entry
+          ENTRY=$(jq -nc \
+            --argjson pr "$PR_NUMBER" \
+            --arg author "$PR_AUTHOR" \
+            --arg wallet "${WALLET:-}" \
+            --arg tier "$TIER" \
+            --argjson amount "$AMOUNT" \
+            --arg title "$PR_TITLE" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{pr: $pr, author: $author, wallet: $wallet, tier: $tier, amount: $amount, title: $title, timestamp: $timestamp, paid: false, tx: ""}')
+
+          echo "$ENTRY" >> internal/payouts/ledger.jsonl
+          echo "Logged: $TIER from @$PR_AUTHOR — $AMOUNT tokens to ${WALLET:-[no wallet]}"
+
+          # Export for tweet step
+          echo "TIER=$TIER" >> "$GITHUB_ENV"
+          echo "AMOUNT=$AMOUNT" >> "$GITHUB_ENV"
+
+      - name: Commit ledger update
+        run: |
+          git config user.name "openagi-bot"
+          git config user.email "bot@openagi.dev"
+          git add internal/payouts/ledger.jsonl
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Log payout for PR #${{ github.event.pull_request.number }}"
+          git pull --rebase origin main
+          git push
+
+      - name: Tweet payout
+        if: env.TIER != ''
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        run: |
+          set +x
+          export TWEET_TEXT="Paid out $AMOUNT tokens for a $TIER contribution to OpenAGI.
+
+          github.com/huanchito656-source/OpenAGI"
+          node internal/scripts/tweet.js

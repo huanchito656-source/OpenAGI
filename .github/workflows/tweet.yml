@@ -1,0 +1,107 @@
+name: Tweet
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [closed]
+
+jobs:
+  tweet-push:
+    # Only tweet for direct pushes by the repo owner — not merge commits, not bot commits
+    if: >
+      github.event_name == 'push'
+      && github.actor == 'huanchito656-source'
+      && !startsWith(github.event.head_commit.message, 'Merge pull request')
+      && !startsWith(github.event.head_commit.message, 'Log payout for PR')
+    runs-on: ubuntu-latest
+    permissions: {}
+    concurrency:
+      group: tweet-push
+      cancel-in-progress: true
+    steps:
+      - name: Build tweet text
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          set +x
+          FIRST_LINE=$(printf '%s' "$COMMIT_MSG" | head -1 | cut -c1-200)
+          {
+            echo "TWEET_TEXT<<TWEET_EOF"
+            printf '%s\n\ngithub.com/huanchito656-source/OpenAGI' "$FIRST_LINE"
+            echo ""
+            echo "TWEET_EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Checkout scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: internal/scripts/tweet.js
+          sparse-checkout-cone-mode: false
+
+      - name: Tweet
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        run: node internal/scripts/tweet.js
+
+  tweet-pr-merged:
+    # Only tweet when a PR is actually merged (not just closed)
+    if: >
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions: {}
+    concurrency:
+      group: tweet-pr
+      cancel-in-progress: true
+    steps:
+      - name: Build tweet text
+        env:
+          PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set +x
+
+          # Determine tier from labels (only labels the repo owner can assign)
+          TIER=""
+          for label in seed research code review; do
+            if echo "$PR_LABELS" | jq -e "index(\"$label\")" > /dev/null 2>&1; then
+              TIER="$label"
+              break
+            fi
+          done
+
+          if [ -z "$TIER" ]; then
+            echo "No tier label found on PR #$PR_NUMBER. Skipping tweet."
+            exit 0
+          fi
+
+          # Capitalize first letter
+          TIER_DISPLAY="$(echo "${TIER:0:1}" | tr '[:lower:]' '[:upper:]')${TIER:1}"
+
+          {
+            echo "TWEET_TEXT<<TWEET_EOF"
+            echo "${TIER_DISPLAY} contribution merged into OpenAGI. #${PR_NUMBER}"
+            echo ""
+            echo "github.com/huanchito656-source/OpenAGI/pull/${PR_NUMBER}"
+            echo "TWEET_EOF"
+          } >> "$GITHUB_ENV"
+
+      - name: Checkout scripts
+        if: env.TWEET_TEXT != ''
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: internal/scripts/tweet.js
+          sparse-checkout-cone-mode: false
+
+      - name: Tweet
+        if: env.TWEET_TEXT != ''
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        run: node internal/scripts/tweet.js

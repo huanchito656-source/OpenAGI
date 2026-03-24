@@ -1,0 +1,50 @@
+name: Seed Submission
+description: Submit domain knowledge from a real agent failure
+labels: ["seed"]
+body:
+  - type: input
+    id: seed
+    attributes:
+      label: The seed
+      description: One sentence — specific, actionable knowledge from a real failure
+      placeholder: "When fixing one test breaks another, the bug is in shared state you haven't identified yet — stop and map the dependencies before continuing."
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What failure taught you this? 1-2 sentences.
+      placeholder: "Agent kept oscillating between two fixes because it didn't realize the tests shared a database connection."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      description: Which seed file does this belong in?
+      options:
+        - coding
+        - research
+        - universal
+        - "New domain (describe below)"
+    validations:
+      required: true
+
+  - type: input
+    id: new_domain
+    attributes:
+      label: New domain name
+      description: If you selected "New domain" above, what should it be called?
+    validations:
+      required: false
+
+  - type: input
+    id: wallet
+    attributes:
+      label: Solana wallet address
+      description: For token payout if your seed is accepted
+    validations:
+      required: false

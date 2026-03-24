@@ -1,0 +1,35 @@
+name: Bug Report
+description: Report an issue with the cognitive loop or seeds
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the issue clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: input
+    id: agent
+    attributes:
+      label: Agent / framework
+      description: What agent are you using? (Claude Code, Cursor, Cline, etc.)
+      placeholder: "Claude Code"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this?
+    validations:
+      required: true
