@@ -34,13 +34,30 @@ That's the loop. Every agent product in existence — Claude Code, Cursor, Devin
 
 ## What Complex Task Performance Requires
 
-For complex, multi-step tasks — the kind agents are asked to do — prediction alone is not enough. Cognitive science ([Soar](https://soar.eecs.umich.edu/), [ACT-R](http://act-r.psy.cmu.edu/), predictive processing) and mathematical proof (DeepMind, ICML 2025: ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)) establish that generalizing agents require a loop with five steps:
+For complex, multi-step tasks — the kind agents are asked to do — prediction alone is not enough. Five independent lines of mathematical proof, spanning 55 years, establish that agents operating on multi-step tasks MUST have world models:
 
-1. **Perceive** — take in information about the current situation
-2. **Model** — build a compressed, structured understanding of how the system works (its constraints, its causal structure, its current state)
-3. **Decide** — given the model, select a strategy and predict what will happen
-4. **Act** — execute
-5. **Update** — compare what happened to what you predicted. If they differ, revise the model.
+1. **Good Regulator Theorem** (Conant & Ashby, 1970) — any system that optimally controls another must contain a model of it
+2. **Solomonoff Induction** (1964) — optimal learning requires maintaining a distribution over world models, updated via Bayes' rule
+3. **AIXI** (Hutter, 2000) — the provably optimal general agent must maintain world models and update them from experience
+4. **RL Sample Complexity Bounds** (Strehl, Li, Littman, 2006) — model-based agents are provably more sample-efficient than model-free
+5. **DeepMind Proof** (Richens et al., ICML 2025, [arXiv 2506.01622](https://arxiv.org/abs/2506.01622)) — multi-step goal-generalizing agents must contain world models (constructive proof with error bounds)
+
+Additionally, the No Free Lunch theorems (Wolpert & Macready, 1997) prove that inductive biases — assumptions about which environments are more likely — are mandatory. An agent with no assumptions performs no better than random. World models encode these assumptions. They are not optional.
+
+Neuroscience confirms this in biological intelligence: the hippocampus builds spatial models and simulates future trajectories before the animal acts (Pfeiffer & Foster, 2013). Dopamine neurons encode prediction errors that quantitatively match temporal-difference learning (Schultz, Dayan, & Montague, 1997). Prefrontal cortex encodes abstract task structure (Mante et al., 2013).
+
+Neuroscience also establishes important constraints: internal models are sparse and task-relevant, not comprehensive replicas of the world (change blindness proves this — Simons & Chabris, 1999). Model-based and model-free processing coexist — not all behavior requires models (Daw et al., 2011; Churchland et al., 2012).
+
+Combined with bounded rationality — the proven fact that all physical intelligence must approximate due to finite resources and intractable problems (Simon, 1955; Bylander, 1994; Roth, 1996) — this gives the complete picture:
+
+**What complex-task intelligence requires (this project's synthesis, consistent with the proofs above):**
+
+1. **Sparse world models** — compressed, task-relevant representations of how the system works. Not comprehensive. Only beliefs that matter.
+2. **Prediction at choice points** — using the model to anticipate outcomes before acting, but not for every action. Bounded rationality means you must be selective. The neuroscience shows brains simulate at choice points (forks in the maze), not during routine traversal.
+3. **Comparison to reality** — checking predictions against actual outcomes using ground truth. Prediction errors are the learning signal.
+4. **Model revision** — updating the model when predictions fail. Bayesian updating is the provably optimal method (Cox, 1946; Solomonoff, 1964).
+5. **Mandatory priors** — starting assumptions about the world. Without them, no better than random (NFL). Seeds, prior knowledge, and domain expertise are not optional extras.
+6. **Bounded rationality** — accepting that you can't model everything. Selecting WHEN to engage deeper thinking is as important as HOW to think. This metacognitive skill — recognizing choice points — follows necessarily from finite resources + the need for models.
 
 A system that perceives and acts but doesn't model or update is just reacting — sufficient for simple tasks, but not for complex multi-step reasoning. The update step — revising your understanding when reality disagrees with your predictions — is what produces learning, improvement, and convergence over time.
 
@@ -77,7 +94,7 @@ These gaps produce the observable problems in the space: silent failures (no exp
 Research across every major framework (LangChain, CrewAI, AutoGen, LangGraph), every agent product (Claude Code, Cursor, Devin, OpenClaw), every relevant paper (Reflexion, Voyager, CoALA, WorldCoder, AdaPlanner, CLIN, WorldLLM, ForeAgent, WALL-E), and every cognitive architecture (Soar, ACT-R) found:
 
 - The industry optimizes the predict-act loop (better prompts, more tools, bigger models, more memory)
-- Research labs have built systems that partially implement the predict-compare-revise loop, but only in controlled/simulated environments — WALL-E (DeepMind, 2024) compares predicted trajectories to actual trajectories and revises rules, achieving 95% success in ALFWorld simulations. WorldLLM (2025) does Bayesian hypothesis testing in text games. ForeAgent (2026) predicts outcomes before executing in ML pipelines.
+- Research labs have built systems that partially implement the predict-compare-revise loop, but only in controlled/simulated environments — WALL-E (UTS/U Maryland/Tencent, 2024; NeurIPS 2025) compares predicted trajectories to actual trajectories and revises rules, achieving 95-98% success in ALFWorld simulations. WorldLLM (2025) does Bayesian hypothesis testing in text games. ForeAgent (ZJU, 2026) predicts outcomes before executing in ML pipelines.
 - None of these have been deployed as general-purpose production agent frameworks. The research is locked inside labs, applied to game environments, and not available as open tools.
 - No production agent framework (LangChain, CrewAI, AutoGen, etc.) implements predict-compare-revise as a core architectural pattern
 
@@ -104,14 +121,14 @@ Research across every major framework (LangChain, CrewAI, AutoGen, LangGraph), e
 | DSPy ([GitHub](https://github.com/stanfordnlp/dspy)) | No | No | No |
 | Trace / OptoPrime ([arXiv](https://arxiv.org/abs/2406.16218)) | No | No | Partial (prompt params) |
 | **ForeAgent** ([arXiv](https://arxiv.org/abs/2601.05930)) | **Yes** | **Yes** | **Partial** |
-| **WALL-E** ([arXiv](https://arxiv.org/abs/2310.07471)) | **Yes** | **Yes** | **Yes** |
+| **WALL-E** ([arXiv](https://arxiv.org/abs/2410.07484)) | **Yes** | **Yes** | **Yes** |
 | **WorldLLM** | **Yes** | **Yes** | **Yes** |
 
 **The pattern:** The vast majority of approaches focus on learning from failure AFTER it happens (Reflexion), storing facts (Mem0, CLAUDE.md, Copilot Memory), accumulating skills (Voyager, gstack), or optimizing prompts (Meta-Prompt, DSPy). None of them make the agent predict what will happen BEFORE acting and check if it was right.
 
 The three that DO predict (ForeAgent, WALL-E, WorldLLM) are research prototypes in controlled environments — not production frameworks, not open source for general use, and none include community knowledge or enforce the loop in code.
 
-**Reflexion specifically** is what the industry calls "self-improvement." It helps — GPT-4's pass rate on HumanEval went from 80.1% to 91% with Reflexion ([arXiv](https://arxiv.org/abs/2303.11366)). But it's autopsy-based. Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It reacts to errors one at a time. That's why it plateaus after 2-3 iterations in practice ([practitioner analysis](https://github.com/nibzard/awesome-agentic-patterns/blob/main/patterns/reflection.md)).
+**Reflexion specifically** is what the industry calls "self-improvement." It helps — improved code generation from 67% to ~88-91%. But it's autopsy-based. Intelligence happens AFTER failure. The agent doesn't build understanding before acting. It doesn't predict outcomes. It reacts to errors one at a time. That's why it plateaus after 2-3 rounds.
 
 The difference:
 - **Everything above:** Act → see what happens → maybe reflect → try again
@@ -119,25 +136,25 @@ The difference:
 
 One learns from crashes. The other learns from testing understanding against reality.
 
-The problem is clear and derived from first principles. The solution: the cognitive loop (predict-compare-revise, enforced by code) + seed knowledge (community-contributed domain expertise, see `seeds/` directory) + community refinement (failures become new seeds, ecosystem compounds).
+The problem is clear and derived from first principles. The mathematical proofs (5 independent results spanning 55 years) establish WHAT is needed: world models, Bayesian updating, mandatory priors. The neuroscience establishes HOW biological intelligence implements it: sparse models, prediction at choice points, prediction errors as learning signals. The solution: sparse world models + predict-compare-revise at choice points + seed knowledge (mandatory priors from community) + bounded rationality (metacognition about when to engage the full loop).
 
 ---
 
 ## What the Solution Requires (Open Questions)
 
-The problem is identified. The solution is not settled. Key open questions:
+The problem is identified. The core requirements are mathematically established (models, updating, priors). Key open questions remain about implementation:
 
-1. **What form should the model take?** An external file? A structured data format? Something maintained in context? Something in the harness code? Research needed.
+1. **What form should the model take?** The math proves models must EXIST but not that they must be explicit. For LLM agents specifically, the LLM is stateless (text in, text out, no persistence), which means the model must be external — a file, a database, something outside the LLM. Making it explicit (human-readable) serves inspectability and community sharing but is an engineering choice, not a mathematical requirement.
 
-2. **How should predictions be structured?** Free-form text? Structured assertions? Falsifiable claims with confidence levels? Research needed.
+2. **How should the agent determine choice points?** Bounded rationality means the full loop can't run on every action. The agent needs metacognition — the ability to assess its own uncertainty and engage deeper thinking when it matters. How to develop this skill in LLM agents is an open question. Seeds can flag known choice points. But novel situations require the agent to recognize them independently.
 
-3. **How should comparison work?** LLM self-comparison (circular verification risk)? Automated testing? External validators? Research needed.
+3. **How should comparison work?** LLM self-comparison risks circular verification (the same engine that made the prediction evaluates it). Ground truth from tool outputs (file contents, test results, error messages) breaks this circularity. External validators and automated testing are stronger but harder to implement.
 
-4. **Does the overhead justify the benefit?** Early experiments show the structured loop uses more turns and tokens. On tasks where predict-act already succeeds, it's pure overhead. The value must come on tasks where predict-act fails. Research needed to identify the crossover point.
+4. **Does the overhead justify the benefit?** The full loop costs more per cycle. Bounded rationality says: only engage it when it matters. The crossover point — where the loop's benefit exceeds its cost — depends on task complexity and novelty. Simple tasks don't need it. Complex novel tasks do. Research needed to identify where the line falls.
 
-5. **Does the "same LLM" problem limit the approach?** The same prediction engine that fails to model a system implicitly might also fail to model it explicitly. Does the act of externalizing and structuring actually help, or does it just transcribe the same errors into a file? Research needed.
+5. **Does the "same LLM" problem limit the approach?** The same prediction engine that fails to model a system implicitly might also fail to model it explicitly. Evidence from this project's testing: explicit articulation of beliefs DOES help — it surfaces assumptions that would otherwise remain implicit and untested. But it's not a complete solution. External knowledge (seeds) and ground truth (tool outputs) are needed to break the circularity.
 
-6. **What existing work can be built on?** WorldLLM's theory-making, Reflexion's self-critique, GitHub Copilot's self-correcting memory, ACE's evolving context — these are partial solutions. How do they combine? Research needed.
+6. **How sparse should models be?** Neuroscience proves models should be sparse and task-relevant. Gigerenzer proved simpler models can outperform comprehensive ones in uncertain environments. But how sparse is too sparse? When does compression lose critical information? Research needed.
 
 ---
 
@@ -159,18 +176,10 @@ An identified problem and an open research mission.
 
 The problem: production agents lack the cognitive architecture required for complex multi-step tasks — specifically, systematic model-building, outcome prediction, prediction-reality comparison, and understanding revision.
 
-The state of the art: research labs (DeepMind, university groups) have built systems that partially implement this in controlled environments. The research is promising (WALL-E achieved 95% success with the full loop). But it's locked inside labs, applied to game worlds, and not available as open production-ready tools.
+The state of the art: research labs (UTS, University of Maryland, Tencent, ZJU, DeepMind) have built systems that partially implement this in controlled environments. The research is promising (WALL-E achieved 95-98% success with the full loop). But it's locked inside labs, applied to game/simulated environments, and not available as open production-ready tools.
 
-The evidence:
-- Mathematical proof: DeepMind ICML 2025 ["General Agents Need World Models"](https://arxiv.org/abs/2506.01622)
-- Cognitive science: [Soar](https://soar.eecs.umich.edu/) (1983-present), [ACT-R](http://act-r.psy.cmu.edu/) (1976-present), predictive processing
-- Agent half-life: [59 minutes for Claude 3.7 Sonnet on complex tasks](https://arxiv.org/abs/2505.05115) (Toby Ord, Oxford)
-- Reliability stagnation: [18 months of model releases, only modest reliability improvement](https://arxiv.org/abs/2602.16666) (Princeton CITP)
-- Enterprise failure: [95% of generative AI pilots fall short of measurable impact](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/) (MIT)
-- Cancellation forecast: [40%+ of agentic AI projects predicted canceled by 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) (Gartner)
-- Benchmark saturation: [SWE-bench Verified scores clustering at 80-81%](https://epoch.ai/benchmarks/swe-bench-verified) with top models separated by fractions of a percent
-- Research prototypes: [WALL-E](https://arxiv.org/abs/2410.07484) (95% success with full loop), [ForeAgent](https://arxiv.org/abs/2601.05930) (6x speedup with prediction)
+The evidence: 5 independent mathematical proofs spanning 55 years (Good Regulator 1970, Solomonoff 1964, AIXI 2000, RL sample complexity 2006, DeepMind 2025), neuroscience (prediction errors, hippocampal preplay, sparse models), empirical data (WALL-E 95-98% success with the full loop, ForeAgent 6x speedup), and source code analysis of every major production agent framework.
 
-The solution: the cognitive loop (predict-compare-revise, enforced by code) + seed knowledge (community-contributed domain expertise, see `seeds/` directory) + community refinement (failures become new seeds, ecosystem compounds).
+The solution: sparse world models + predict-compare-revise at choice points + mandatory priors (seeds) + bounded rationality (metacognitive selection of when to engage the full loop). For LLM agents specifically: external persistence of the model (because LLMs are stateless).
 
 The mission: open-source what billion-dollar labs are researching behind closed doors. Build a community to push agentic intelligence from lab prototypes to production reality. Achieve AGI together, decentralized and exponentially. This is what OpenAGI exists to do.
